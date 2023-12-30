@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Data to API</title>
+</head>
+<body>
+
+    <h1>Paste Excel Data</h1>
+    
+    <textarea id="excelData" placeholder="Paste your Excel data here" rows="30"></textarea>
+    <button onclick="sendData()">Send to API</button>
+
+    <script>
+        function sendData() {
+            // Get the Excel data from the textarea
+            const excelData = document.getElementById('excelData').value;
+
+            // Replace newlines and other unwanted characters if necessary
+            const cleanedData = excelData.replace(/[\r\n]+/g, ' ');
+
+            // Your API endpoint URL
+            const apiUrl = '/api/receiveExcelData?numberOfRequiredPoints=500';
+
+            // Make a POST request to the API
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Add any additional headers as needed
+                },
+                body: JSON.stringify({ data: cleanedData })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the API response as needed
+                console.log('API Response:', data);
+                const apiResponseTextarea = document.getElementById('excelData');
+                apiResponseTextarea.value = apiResponseTextarea.value + '\n' + data[0].x + '\t' + data[0].y + '\n' + data[1].x + '\t' + data[1].y;
+            })
+            .catch(error => {
+                console.error('Error sending data to API:', error);
+            });
+        }
+    </script>
+
+</body>
+</html>
